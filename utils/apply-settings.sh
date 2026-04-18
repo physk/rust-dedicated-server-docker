@@ -6,7 +6,6 @@ if ! type -p python && type -p python3; then
   python() { python3 "$@"; }
 fi
 
-[ ! -r /rust-environment.sh ] || source /rust-environment.sh
 export ENABLE_RUST_EAC CUSTOM_MAP_URL MAP_BASE_URL SELF_HOST_CUSTOM_MAP
 export seed salt worldsize maxplayers servername apply_settings_debug_mode
 if [ "${apply_settings_debug_mode:-false}" = true ]; then
@@ -14,7 +13,7 @@ if [ "${apply_settings_debug_mode:-false}" = true ]; then
   set -x
 fi
 
-echo 'Applying server settings from rust-environment.sh:'
+echo 'Applying server settings:'
 
 server_cfg=serverfiles/server/rustserver/cfg/server.cfg
 lgsm_cfg=lgsm/config-lgsm/rustserver/rustserver.cfg
@@ -39,7 +38,7 @@ function minimum() (
   local major="${2%.*}"
   local minor="${2#*.}"
   if ! type -P "$1"; then
-    return false
+    return 1
   fi
   python -c 'import platform,sys; check=lambda x,y,z: x.startswith(y) and int(x.split(".")[0:2][-1]) >= z; sys.exit(0) if check(platform.python_version(), sys.argv[1], int(sys.argv[2])) else sys.exit(1)' \
   "${major}" "${minor}"
@@ -68,7 +67,7 @@ function apply-generated-map-settings() {
   if [ -z "$worldsize" ] || ! check-range "$worldsize" 1000 6000; then
     worldsize=3000
   fi
-  # apply user-customized settings from rust-environment.sh
+  # apply user-customized settings from .env
   apply-setting "$lgsm_cfg" worldsize "worldsize=$worldsize"
   if [ -n "$seed" ]; then
     apply-setting "$lgsm_cfg" seed "seed=$seed"

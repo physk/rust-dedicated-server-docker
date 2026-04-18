@@ -69,9 +69,19 @@ Enable port forwarding on your router for the following ports.
 
 # Getting started
 
-If you don't want to customize anything, then start the server.  It will
-generate a 3K map using a random seed which will persist when restarting the
-server.
+Copy the example environment file to configure the server:
+
+    cp .env.example .env
+
+Edit `.env` with your preferred settings (server name, map seed, player count,
+etc.).  If you don't want to customize anything, the defaults will start the
+server with a 3K map using a random seed which will persist across restarts.
+
+The first time you run the server, the Docker image is built locally:
+
+    docker compose build
+
+Then start the server:
 
     docker compose up -d
 
@@ -153,12 +163,12 @@ localhost.
     ssh -vNL 127.0.0.1:28016:127.0.0.1:28016 user@example.com
 
 If you still want your RCON interface to be publicy available (I don't recommend
-this), then you can set the `RUST_RCON_INTERFACE` variable before starting the
-server.
+this), then set `RUST_RCON_INTERFACE=0.0.0.0` in your `.env` file and restart
+the server.
 
 ```bash
 docker compose down
-export RUST_RCON_INTERFACE=0.0.0.0
+# edit .env: set RUST_RCON_INTERFACE=0.0.0.0
 docker compose up -d
 ```
 
@@ -225,12 +235,11 @@ deleted unused logs, run the following command.
 
 ### Easy Anti-Cheat
 
-By default, EAC is disabled for Linux clients.  Enable EAC with the following
-shell variable in [`rust-environment.sh`](rust-environment.sh).
-
+By default, EAC is disabled for Linux clients.  Enable EAC by uncommenting the
+following line in your [`.env`](.env.example) file.
 
 ```bash
-export ENABLE_RUST_EAC=1
+ENABLE_RUST_EAC=1
 ```
 
 If EAC is enabled, Linux clients will not be able to connect and your server
@@ -351,8 +360,8 @@ You can have a randomly generated map with a seed or a custom map.
 > Note: Generated Map settings are completely ignored if you've configured a
 > Custom Map.
 
-You can uncomment and change the following variables in
-[`rust-environment.sh`](rust-environment.sh).
+You can uncomment and change the following variables in your
+[`.env`](.env.example) file.
 
 - seed
 - salt
@@ -392,8 +401,8 @@ If you're playing multi-player and self hosting your Map, then there's two extra
 configuration items you must toggle.
 
 - Port forward port `8000/tcp` to your router.
-- Set `MAP_BASE_URL` variable in [`rust-environment.sh`](rust-environment.sh) to
-  your public IP where clients can download the map.
+- Set `MAP_BASE_URL` in your [`.env`](.env.example) file to your public IP
+  where clients can download the map.
 
 Your custom map file name must end with `.map`.  Download your custom map
 locally to your computer and place it in the [`custom-maps/`](custom-maps/)
@@ -417,9 +426,8 @@ directory is what enables the Custom Map logic.
 ##### Remotely hosted custom maps
 
 If you're using a public file serving service separate from your game server
-(such as Dropbox), then set `CUSTOM_MAP_URL` variable in
-[`rust-environment.sh`](rust-environment.sh).  No extra configuration is
-required.
+(such as Dropbox), then set `CUSTOM_MAP_URL` in your [`.env`](.env.example)
+file.  No extra configuration is required.
 
 ##### Observer Island
 

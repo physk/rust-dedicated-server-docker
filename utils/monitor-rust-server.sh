@@ -1,7 +1,6 @@
 #!/bin/bash
 
 LOGFILE=/home/linuxgsm/log/autoheal.log
-[ ! -r /rust-environment.sh ] || source /rust-environment.sh
 
 function wait-for-rust() {
   until pgrep "$@"; do
@@ -37,12 +36,12 @@ function kill-container-on-absence-of() {
 
 if [ ! "${uptime_monitoring:-}" = true ]; then
   echo 'RustDedicated will not be monitored.'
-  echo 'Set uptime_monitoring=true in rust-environment.sh to enable autoheal.'
+  echo 'Set uptime_monitoring=true in .env to enable autoheal.'
   exit
 else
   echo 'Monitoring RustDedicated for automatic restart.'
 fi
 # discard further output
 exec &> /dev/null
-wait-for RustDedicated
+wait-for-rust RustDedicated
 kill-container-on-absence-of RustDedicated
