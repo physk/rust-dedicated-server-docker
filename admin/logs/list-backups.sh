@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./admin/backup/list-backups.sh lgsm-logs-backup.tgz "$@"
+./admin/backup/list-backups.sh rust-logs-backup.tgz "$@"

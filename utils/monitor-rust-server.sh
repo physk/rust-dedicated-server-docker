@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LOGFILE=/home/linuxgsm/log/autoheal.log
+LOGFILE=/home/steam/log/autoheal.log
 
 function wait-for-rust() {
   until pgrep "$@"; do

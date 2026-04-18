@@ -4,8 +4,8 @@
 #   Supports logging into the server.
 
 set -e
-plugin_dir=/home/linuxgsm/serverfiles/oxide/plugins
-plugin_txt=/home/linuxgsm/serverfiles/oxide/config/plugins.txt
+plugin_dir=/home/steam/serverfiles/oxide/plugins
+plugin_txt=/home/steam/serverfiles/oxide/config/plugins.txt
 export TMP_DIR="$(mktemp -d)"
 trap '[ ! -d "$TMP_DIR" ] || rm -rf "$TMP_DIR"' EXIT
 if [ ! -f "$plugin_txt" ]; then

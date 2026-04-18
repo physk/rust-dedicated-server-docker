@@ -1,5 +1,7 @@
 #!/bin/bash
 
+service_name="${DOCKER_SERVICE_NAME:-rust}"
+
 # set the working directory to repository root
 # only when this script is called by full path; e.g. from cron job
 if grep '^/' <<<  "$0" > /dev/null; then
@@ -22,12 +24,11 @@ EOF
   fi
 fi
 
-docker compose exec -T lgsm \
+docker compose exec -T "$service_name" \
   find serverfiles/server/rustserver/ \
     -maxdepth 1 \
     -type f \( -name '*.map' -o -name '*.sav*' \) \
     -exec rm -f {} +
-docker compose exec -T lgsm sed -i '/^ *seed=/d' lgsm/config-lgsm/rustserver/rustserver.cfg
 docker compose down
 docker compose up -d
 echo 'The server has been rebooted with docker compose up -d.'

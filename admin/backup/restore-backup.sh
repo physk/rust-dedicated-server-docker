@@ -2,6 +2,9 @@
 
 set -e
 
+service_name="${DOCKER_SERVICE_NAME:-rust}"
+container_user="${DOCKER_CONTAINER_USER:-steam}"
+
 if [ ! -d .git -a ! -d admin ]; then
   echo 'ERROR: must run this command from the root of the git repository.' >&2
   exit 1
@@ -15,7 +18,7 @@ fi
 
 ls "$1" > /dev/null
 
-if [ ! "$(tar -tzf "$1" | head -n1)" = 'lgsm/' ]; then
+if [ ! "$(tar -tzf "$1" | head -n1)" = 'serverfiles/' ]; then
   echo "File: $1"
   echo 'ERROR: File exists but not a valid backup.' >&2
   exit 1
@@ -24,7 +27,7 @@ fi
 cat <<EOF
 WARNING: This is a permanent action.
 
-All maps, config, plugin config, and lgsm config  will be destroyed including
+All maps, config, and plugin config will be destroyed including
 save backups in order to restore your backup:
 
     $1
@@ -37,7 +40,7 @@ if [ ! "$response" = y -a ! "$response" = Y ]; then
   exit
 fi
 
-server_container_id="$(docker compose ps -q lgsm)"
+server_container_id="$(docker compose ps -q "$service_name")"
 
 if [ -z "${server_container_id}" ]; then
   echo 'ERROR: Rust server not running... did you "docker compose up -d"?'
@@ -48,11 +51,11 @@ echo "Restoring $1"
 
 # copy backup file to server
 backup_file="${1##*/}"
-docker cp "$1" "${server_container_id}:/home/linuxgsm/${backup_file}"
-docker compose exec -T lgsm chown linuxgsm: /home/linuxgsm/"${backup_file}"
+docker cp "$1" "${server_container_id}:/home/steam/${backup_file}"
+docker compose exec -T "$service_name" chown steam: /home/steam/"${backup_file}"
 
 # restore backup and reboot the server
-docker compose exec -Tu linuxgsm lgsm bash -ex <<EOF
+docker compose exec -Tu "$container_user" "$service_name" bash -ex <<EOF
 # kill the uptime monitor before restoring
 if pgrep -f monitor-rust-server.sh &> /dev/null; then
   echo 'Stopping uptime monitor.'
@@ -61,8 +64,9 @@ fi
 ./rustserver stop || true
 
 REMOVE_DIRS=(
-  lgsm
   serverfiles/server
+  steamcmd
+  rcon_pass
 )
 if [ -d serverfiles/oxide ]; then
   REMOVE_DIRS+=( serverfiles/oxide )

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CFG_FILE="${CFG_FILE:-/home/linuxgsm/serverfiles/server/rustserver/cfg/server.cfg}"
+CFG_FILE="${CFG_FILE:-/home/steam/serverfiles/server/rustserver/cfg/server.cfg}"
 MAP_FILE="${MAP_FILE:-/app/server/convars.map}"
 
 mkdir -p "$(dirname "$CFG_FILE")"
