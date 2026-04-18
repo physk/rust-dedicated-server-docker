@@ -1,5 +1,8 @@
 #!/bin/bash
 
+service_name="${DOCKER_SERVICE_NAME:-rust}"
+container_user="${DOCKER_CONTAINER_USER:-steam}"
+
 function cleanup_on() {
   if [ "$1" -ne 0 ]; then
     # backup failed so remove the bad backup file
@@ -18,15 +21,16 @@ if grep '^/' <<<  "$0" > /dev/null; then
   cd "${0%admin/*}"
 fi
 
-BACKUP_FILE="$(date  +%Y-%d-%m-%s)"_lgsm-rustserver-backup.tgz
+BACKUP_FILE="$(date  +%Y-%d-%m-%s)"_rustserver-backup.tgz
 export BACKUP_FILE
 
 [ -d backups ] || mkdir backups
 
-docker compose exec -Tu linuxgsm lgsm /bin/bash -ex > backups/"$BACKUP_FILE" <<'EOF'
+docker compose exec -Tu "$container_user" "$service_name" /bin/bash -ex > backups/"$BACKUP_FILE" <<'EOF'
 BACKUP_DIRS=(
-  lgsm
   serverfiles/server
+  steamcmd
+  rcon_pass
 )
 if [ -d serverfiles/oxide ]; then
   BACKUP_DIRS+=( serverfiles/oxide )

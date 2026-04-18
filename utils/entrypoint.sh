@@ -1,39 +1,21 @@
 #!/bin/bash
 # DESCRIPTION:
-#   Container entrypoint. Runs as root.
-#   Handles PUID/PGID remapping, volume ownership, then launches
-#   custom-rust-server.sh as the linuxgsm user.
+#   Container entrypoint for standalone SteamCMD/RustDedicated flow.
 
-set -ex
+set -euo pipefail
 
-# Belt-and-suspenders: remove sudoers entry on any exit path
-trap 'rm -f /etc/sudoers.d/lgsm' EXIT
+PUID="${PUID:-1000}"
+PGID="${PGID:-1000}"
 
-# Grant temporary passwordless sudo for initial LGSM setup.
-# Removed by custom-rust-server.sh once setup completes.
-echo 'linuxgsm  ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/lgsm
-
-# Remap linuxgsm UID/GID to match the host user (linuxserver-style PUID/PGID).
-# Defaults to 1000/1000. Set PUID and PGID in .env to match your host user.
-PUID=${PUID:-1000}
-PGID=${PGID:-1000}
-if [ ! "$(id -u linuxgsm)" = "$PUID" ]; then
-    usermod -o -u "$PUID" linuxgsm
+if [ "$(id -u steam)" != "$PUID" ]; then
+  usermod -o -u "$PUID" steam
 fi
-if [ ! "$(id -g linuxgsm)" = "$PGID" ]; then
-    groupmod -o -g "$PGID" linuxgsm
+if [ "$(id -g steam)" != "$PGID" ]; then
+  groupmod -o -g "$PGID" steam
 fi
 
-# Fix ownership on volume-mounted paths
-[ "$(stat -c '%u' /home/linuxgsm)" != "$PUID" ] && chown -R linuxgsm: /home/linuxgsm
-[ "$(stat -c '%u' /custom-maps)" != "$PUID" ] && chown -R linuxgsm: /custom-maps
-for dir in /home/linuxgsm/serverfiles /home/linuxgsm/serverfiles/oxide; do
-    [ -d "$dir" ] && chown -v linuxgsm: "$dir"
-done
-[ -d /home/linuxgsm/serverfiles/oxide/config ] && \
-    chown -R linuxgsm: /home/linuxgsm/serverfiles/oxide/config
-
-rm -f ~linuxgsm/linuxgsm.sh
+mkdir -p /home/steam /custom-maps
+chown -R steam:steam /home/steam /custom-maps
 
 bash /utils/gen-cfg.sh
-exec su - linuxgsm -c "/utils/custom-rust-server.sh"
+exec su - steam -c "bash /utils/custom-rust-server.sh"

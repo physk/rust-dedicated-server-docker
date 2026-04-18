@@ -1,14 +1,13 @@
 volumes:
-  lgsm:
+  rust_data:
 services:
-  lgsm:
+  rust:
     # Limiting server resources
     cpu_count: 16
     mem_limit: 8gb
     init: true
     user: root
-    image: ghcr.io/physk/docker-compose-lgsm-rust-dedicated-server:latest
-    # build: .
+    build: .
     env_file:
       - path: .env
         required: false
@@ -16,12 +15,12 @@ services:
     # docker-compose auto restarts the rust server.
     restart: always
     volumes:
-      - ./lgsm:/home/linuxgsm
-      - ./mod-configs/:/home/linuxgsm/serverfiles/oxide/config/:rw
+      - ./data:/home/steam
+      - ./mod-configs/:/home/steam/serverfiles/oxide/config/:rw
       - ./custom-mods/:/custom-plugins/:ro
       - ./custom-maps/:/custom-maps/:rw
-      - ./harmony-mods:/home/linuxgsm/serverfiles/HarmonyMods
-      - ./harmony-config:/home/linuxgsm/serverfiles/HarmonyConfig
+      - ./harmony-mods:/home/steam/serverfiles/HarmonyMods
+      - ./harmony-config:/home/steam/serverfiles/HarmonyConfig
       - ./utils/:/utils/:ro
     ports:
       - ${RUST_RCON_INTERFACE:-127.0.0.1}:28016:28016

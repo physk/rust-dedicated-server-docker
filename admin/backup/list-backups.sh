@@ -1,6 +1,6 @@
 #!/bin/bash
 
-backup_name="lgsm-rustserver-backup.tgz"
+backup_name="rustserver-backup.tgz"
 list_all=false
 
 function python() {
@@ -59,7 +59,7 @@ print_file "$x"
 done | limit_output "$list_all"
 python -c 'print("="*95)'
 
-if [ "$backup_name" = 'lgsm-rustserver-backup.tgz' ]; then
+if [ "$backup_name" = 'rustserver-backup.tgz' ]; then
   echo
   echo 'Restore your backup with the following command.'
   echo '    ./admin/backup/restore-backup.sh backups/file.tgz'

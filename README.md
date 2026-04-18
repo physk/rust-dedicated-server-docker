@@ -1,6 +1,6 @@
-# Dockerized LGSM Rust Dedicated Server 
-This project combines Docker, [Rust][rust] Dedicated Server, and [Linux
-GSM][lgsm] all in one!  Self-hosted Rust dedicated server management made easy.
+# Dockerized Rust Dedicated Server
+This project combines Docker and [Rust][rust] Dedicated Server with a
+standalone SteamCMD bootstrap flow.
 
 - [Play on your server](#play-on-your-server)
 - [Playing multiplayer](#playing-multiplayer)
@@ -94,6 +94,22 @@ see progress) with the following command.
 
 Press `CTRL+C` to exit logs.
 
+### First-boot SteamCMD bootstrap mode (default runtime)
+
+This project uses a standalone first-boot flow based on SteamCMD and starts
+`RustDedicated` directly (without LinuxGSM runtime control).
+
+In this mode the container will:
+
+1. Download SteamCMD if needed.
+2. Install/update Rust (`app_update 258550`) on first boot (or always if
+   `RUST_UPDATE_MODE=always`).
+3. Generate `server.cfg` from env vars.
+4. Optionally install Oxide when `ENABLE_OXIDE=true`
+   (`OXIDE_DOWNLOAD_URL` can override the download source).
+5. Install/update uMod plugins from `mod-configs/plugins.txt`.
+6. Start `RustDedicated`.
+
 # Server power management
 
 ### Starting the server
@@ -132,6 +148,17 @@ the root of this repository.
 # alternately if you need root shell access
 ./admin/shell.sh root
 ```
+
+Most admin scripts assume the Docker Compose service name is `rust`. If you
+rename the service, you can override
+the target with:
+
+```bash
+DOCKER_SERVICE_NAME=your_service_name ./admin/shell.sh
+```
+
+Some scripts also support `DOCKER_CONTAINER_USER` (defaults to `steam`) for
+`docker compose exec -u` calls.
 
 ### RCON: Remote Admin Console
 
@@ -312,6 +339,16 @@ from the server automatically.
 Add Harmony mods to [`harmony-mods`](harmony-mods) folder.  It will be available
 to your Rust maps such as [Observer Island][map-obs-isle].
 
+### Quick config/script validation
+
+You can run a quick local validation pass before starting containers:
+
+    ./admin/check-errors.sh
+
+This checks shell syntax and (when Docker is installed) validates `docker compose`
+configuration. It also reports how many LinuxGSM-coupled references exist so you
+can estimate refactor effort if you want to remove the LinuxGSM dependency.
+
 ### Troubleshooting: Mods failing to load
 
 Sometimes, mods will fail to load into Oxide because of differences between
@@ -471,6 +508,5 @@ refer to the previous sections for custom map hosting for remote play.
 [docker]: https://docs.docker.com/engine/install/
 [fp-custom-maps]: https://wiki.facepunch.com/rust/Hosting_a_custom_map
 [git]: https://git-scm.com/
-[lgsm]: https://linuxgsm.com/
 [map-obs-isle]: https://lone.design/product/observer-island/
 [rust]: https://rust.facepunch.com/
