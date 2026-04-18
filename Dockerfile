@@ -27,4 +27,6 @@ RUN echo 'source /opt/linuxgsm-venv/bin/activate' > /etc/profile.d/linuxgsm-venv
 COPY utils/ /utils/
 RUN chmod +x /utils/*.sh
 
+COPY docker/convars.map /app/server/convars.map
+
 ENTRYPOINT ["/bin/bash", "/utils/entrypoint.sh"]

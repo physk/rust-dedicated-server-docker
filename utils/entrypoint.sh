@@ -49,4 +49,5 @@ rm -f ~linuxgsm/linuxgsm.sh
   done
 } > /etc/profile.d/lgsm-runtime-env.sh
 
+bash /utils/gen-cfg.sh
 exec su - linuxgsm -c "/utils/custom-rust-server.sh"
