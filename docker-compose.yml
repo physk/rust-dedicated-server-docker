@@ -3,11 +3,12 @@ volumes:
 services:
   lgsm:
     # Limiting server resources
-    cpu_count: 2
+    cpu_count: 16
     mem_limit: 8gb
     init: true
     user: root
-    build: .
+    image: ghcr.io/physk/docker-compose-lgsm-rust-dedicated-server:latest
+    # build: .
     env_file:
       - path: .env
         required: false

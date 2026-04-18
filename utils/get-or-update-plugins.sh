@@ -8,8 +8,18 @@ plugin_dir=/home/linuxgsm/serverfiles/oxide/plugins
 plugin_txt=/home/linuxgsm/serverfiles/oxide/config/plugins.txt
 export TMP_DIR="$(mktemp -d)"
 trap '[ ! -d "$TMP_DIR" ] || rm -rf "$TMP_DIR"' EXIT
-if [ ! -f "$plugin_txt" ];  then
+if [ ! -f "$plugin_txt" ]; then
   plugin_txt=/dev/null
+fi
+
+# Merge PLUGIN_LIST env var into the effective plugin list.
+# Plugins in PLUGIN_LIST are combined with plugins.txt; either source
+# keeps a plugin installed, and removing from both removes it.
+if [ -n "${PLUGIN_LIST:-}" ]; then
+  combined="${TMP_DIR}/plugins_combined.txt"
+  printf '%s\n' "$PLUGIN_LIST" > "$combined"
+  [ "$plugin_txt" != /dev/null ] && cat "$plugin_txt" >> "$combined"
+  plugin_txt="$combined"
 fi
 if [ ! -d "$plugin_dir" ]; then
   mkdir -p "$plugin_dir"

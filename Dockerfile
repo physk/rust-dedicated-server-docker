@@ -27,4 +27,4 @@ RUN echo 'source /opt/linuxgsm-venv/bin/activate' > /etc/profile.d/linuxgsm-venv
 COPY utils/ /utils/
 RUN chmod +x /utils/*.sh
 
-ENTRYPOINT ["/utils/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "/utils/entrypoint.sh"]
