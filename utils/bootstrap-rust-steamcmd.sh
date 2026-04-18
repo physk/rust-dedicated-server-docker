@@ -103,16 +103,16 @@ start_custom_map_server_if_needed() {
 }
 
 build_rust_command() {
-  local host_name="${servername:-Rust}"
-  local identity="${RUST_SERVER_IDENTITY:-rustserver}"
-  local ip="${RUST_SERVER_IP:-0.0.0.0}"
-  local port="${RUST_SERVER_PORT:-28015}"
-  local rcon_port="${RUST_RCON_PORT:-28016}"
-  local max_players="${maxplayers:-50}"
-  local save_interval="${RUST_SAVE_INTERVAL:-300}"
-  local seed_value="${seed:-1337}"
-  local salt_value="${salt:-12345}"
-  local world_size="${worldsize:-3000}"
+  local host_name="${SERVER_HOSTNAME:-Rust}"
+  local identity="${SERVER_IDENTITY:-rustserver}"
+  local ip="${SERVER_IP:-0.0.0.0}"
+  local port="${SERVER_PORT:-28015}"
+  local rcon_port="${RCON_PORT:-28016}"
+  local max_players="${SERVER_MAXPLAYERS:-50}"
+  local save_interval="${SERVER_SAVEINTERVAL:-300}"
+  local seed_value="${SERVER_SEED:-1337}"
+  local salt_value="${SERVER_SALT:-12345}"
+  local world_size="${SERVER_WORLDSIZE:-3000}"
   local rcon_password
   rcon_password="$(< "$HOME/rcon_pass")"
 
@@ -142,6 +142,25 @@ build_rust_command() {
   fi
 
   cmd+=( -logfile "$HOME/log/console/rustserver-console.log" )
+
+  log "--- Server configuration ---"
+  log "  hostname:      $host_name"
+  log "  identity:      $identity"
+  log "  ip:            $ip"
+  log "  port:          $port"
+  log "  rcon port:     $rcon_port"
+  log "  max players:   $max_players"
+  log "  save interval: $save_interval"
+  if [ -n "${CUSTOM_MAP_URL:-}" ]; then
+    log "  map:           custom url ($CUSTOM_MAP_URL)"
+  elif [ "${SELF_HOST_CUSTOM_MAP:-false}" = "true" ]; then
+    log "  map:           self-hosted custom"
+  else
+    log "  seed:          $seed_value"
+    log "  salt:          $salt_value"
+    log "  world size:    $world_size"
+  fi
+  log "----------------------------"
 }
 
 main() {

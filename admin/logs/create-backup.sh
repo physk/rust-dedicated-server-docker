@@ -21,7 +21,7 @@ if grep '^/' <<<  "$0" > /dev/null; then
   cd "${0%admin/*}"
 fi
 
-BACKUP_FILE="$(date  +%Y-%d-%m-%s)"_rust-logs-backup.tgz
+BACKUP_FILE="$(date  +%Y-%m-%d-%s)"_rust-logs-backup.tgz
 export BACKUP_FILE
 
 [ -d backups ] || mkdir backups

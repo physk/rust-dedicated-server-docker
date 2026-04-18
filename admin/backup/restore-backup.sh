@@ -59,7 +59,7 @@ docker compose exec -Tu "$container_user" "$service_name" bash -ex <<EOF
 # kill the uptime monitor before restoring
 if pgrep -f monitor-rust-server.sh &> /dev/null; then
   echo 'Stopping uptime monitor.'
-  kill "\$(pgrep -f monitor-rust-server.sh)"
+  kill \$(pgrep -f monitor-rust-server.sh)
 fi
 ./rustserver stop || true
 

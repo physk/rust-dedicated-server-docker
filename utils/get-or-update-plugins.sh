@@ -56,7 +56,7 @@ function get_plugin_name_by_class() {
 function upgrade_plugins() {
   local plugin_name
   while read plugin; do
-    if [ -z "$plugin" ] || [ -f "${plugin##*/}" ]; then
+    if [ -z "$plugin" ] || [ ! -f "${plugin}" ]; then
       continue
     fi
     local_hash=$(hash_stdin < "${plugin}")

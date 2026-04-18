@@ -21,9 +21,8 @@ services:
       - ./custom-maps/:/custom-maps/:rw
       - ./harmony-mods:/home/steam/serverfiles/HarmonyMods
       - ./harmony-config:/home/steam/serverfiles/HarmonyConfig
-      - ./utils/:/utils/:ro
     ports:
-      - ${RUST_RCON_INTERFACE:-127.0.0.1}:28016:28016
+      - ${RUST_RCON_INTERFACE:-127.0.0.1}:${RCON_PORT:-28016}:${RCON_PORT:-28016}
       - 0.0.0.0:28015:28015/udp
       - 0.0.0.0:8000:8000/tcp
     healthcheck:

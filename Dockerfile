@@ -14,6 +14,7 @@ RUN dpkg --add-architecture i386 && \
       ca-certificates \
       cpio \
       curl \
+      dos2unix \
       file \
       gzip \
       hostname \
