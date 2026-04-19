@@ -34,6 +34,7 @@ RUN dpkg --add-architecture i386 && \
       tar \
       tmux \
       unzip \
+      gosu \
       util-linux \
       uuid-runtime \
       wget \
