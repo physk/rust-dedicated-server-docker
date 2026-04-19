@@ -15,7 +15,7 @@ if [ "$(id -g steam)" != "$PGID" ]; then
 fi
 
 mkdir -p /home/steam /custom-maps
-chown -R steam:steam /home/steam /custom-maps
 
 bash /utils/gen-cfg.sh
+chown -R steam:steam /home/steam /custom-maps
 exec su - steam -c "bash /utils/custom-rust-server.sh"
