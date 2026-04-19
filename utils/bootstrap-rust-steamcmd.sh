@@ -141,8 +141,6 @@ build_rust_command() {
     cmd+=( +server.seed "$seed_value" +server.salt "$salt_value" +server.worldsize "$world_size" )
   fi
 
-  cmd+=( -logfile /dev/stdout )
-
   log "--- Server configuration ---"
   log "  hostname:      $host_name"
   log "  identity:      $identity"
